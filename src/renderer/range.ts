@@ -117,6 +117,30 @@ export class Range {
   }
 
   /**
+   * Gets the difference of this range with another range.
+   * @param other - The other range to subtract from this range.
+   * @returns An array of ranges representing the difference.
+   */
+  exclude(other: Range): Range[] {
+    if (!this.intersects(other)) {
+      return [this];
+    }
+
+    const { startRow, startCol, endRow, endCol } = this;
+    const nOther = this.intersection(other);
+    return [
+      // Top difference
+      new Range(startRow, startCol, nOther.startRow - 1, endCol),
+      // Bottom difference
+      new Range(nOther.endRow + 1, startCol, endRow, endCol),
+      // Left difference
+      new Range(nOther.startRow, startCol, nOther.endRow, nOther.startCol - 1),
+      // Right difference
+      new Range(nOther.startRow, nOther.endCol + 1, nOther.endRow, endCol),
+    ].filter((it) => it.rows >= 1 && it.cols >= 1);
+  }
+
+  /**
    * Iterates over each row in the range and calls the callback function.
    * @param cb - The callback function to call for each row.
    * @param endRow - The optional ending row to stop the iteration.

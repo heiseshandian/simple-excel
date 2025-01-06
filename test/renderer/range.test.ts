@@ -52,6 +52,26 @@ describe("Range", () => {
     expect(union.end).toEqual([6, 6]);
   });
 
+  it("should correctly calculate the difference of two ranges when they intersect", () => {
+    const range1 = Range.create(1, 1, 5, 5);
+    const range2 = Range.create(3, 3, 6, 6);
+    const difference = range1.exclude(range2);
+    expect(difference.length).toBe(2);
+    expect(difference[0].start).toEqual([1, 1]);
+    expect(difference[0].end).toEqual([2, 5]);
+    expect(difference[1].start).toEqual([3, 1]);
+    expect(difference[1].end).toEqual([5, 2]);
+  });
+
+  it("should return an empty array when the ranges do not intersect", () => {
+    const range1 = Range.create(1, 1, 2, 2);
+    const range2 = Range.create(3, 3, 4, 4);
+    const difference = range1.exclude(range2);
+    expect(difference.length).toBe(1);
+    expect(difference[0].start).toEqual([1, 1]);
+    expect(difference[0].end).toEqual([2, 2]);
+  });
+
   it("should create a range from a reference string", () => {
     const range = Range.with("A1:B2");
     expect(range.start).toEqual([0, 0]);
